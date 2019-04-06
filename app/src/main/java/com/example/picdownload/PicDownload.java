@@ -42,6 +42,7 @@ public class PicDownload extends AppCompatActivity implements PictureSlideFragme
     private ViewPager viewPager;
     private int position;
     private Button  btn_DownLoad;
+    //
     private String imageUrls[]={
             "https://b-ssl.duitang.com/uploads/item/201510/04/20151004001302_QiYvP.jpeg",
             "https://b-ssl.duitang.com/uploads/item/201509/03/20150903001242_MmWPh.jpeg",
@@ -66,7 +67,7 @@ public class PicDownload extends AppCompatActivity implements PictureSlideFragme
         btn_DownLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                   //设置大图页面当前显示项
                    int currentPos= viewPager.getCurrentItem();
                    DownLoadImageService downLoadImage = new DownLoadImageService(imageUrls[currentPos],PicDownload.this);
                    new Thread(downLoadImage).start();
@@ -79,7 +80,7 @@ public class PicDownload extends AppCompatActivity implements PictureSlideFragme
         //隐藏系统的标题栏
         actionBar = getSupportActionBar();
         actionBar.hide();
-        //获取当前项position
+        //获取当前项的position
         Intent intent = getIntent();
         position = intent.getIntExtra("position",0);
 
@@ -117,13 +118,16 @@ public class PicDownload extends AppCompatActivity implements PictureSlideFragme
     }
 
 
+    //设置内部类传参
     private class PictureSlidePagerAdapter extends FragmentPagerAdapter{
+
         public PictureSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int i) {
+            //newInstance方法传入图片需要的url
             return PictureSlideFragment.newInstance(urlList.get(i));
         }
 

@@ -22,6 +22,9 @@ import java.util.concurrent.ExecutionException;
 
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
+    public static final int GET_TASK_RESULT = 1;
+    public static final int GET_NONE_RESULT = 0;
+
     public Context mcontext;
     public ArrayList<NetPicture> picList;
 
@@ -52,26 +55,20 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
                 .inflate(R.layout.item_layout,parent,false);
 
         final ViewHolder viewHolder = new ViewHolder(view);
-        //设计点击事件
+        //设置点击事件
         viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = viewHolder.getAdapterPosition();
                 NetPicture picture = picList.get(position);
                 String url = picture.getImageUrl();
+                //点击打开大图
                 Intent intent = new Intent(mcontext,PicDownload.class);
                 intent.putExtra("imageUrl",url);
                 mcontext.startActivity(intent);
             }
         });
-//
-//        //设置点击事件
-//        viewHolder.picView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+
 
         return viewHolder;
 
@@ -87,7 +84,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what){
-                    case 1:
+                    case GET_TASK_RESULT:
                         Bitmap bitmap = (Bitmap)msg.obj;
                         viewHolder.imageView.setImageBitmap(bitmap);
                         break;
@@ -120,17 +117,18 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
         @Override
         protected Bitmap doInBackground(String... strings) {
+            //得到bitmap对象
             Bitmap bitmap = null;
-            try {
-                bitmap = Glide.with(mcontext)
-                         .load(url)
-                         .asBitmap()
-                         .into(500,500)
-                        .get();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                try {
+                    bitmap = Glide.with(mcontext)
+                            .load(url)
+                            .asBitmap()
+                            .into(500,500)
+                            .get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
             }
             return bitmap;
         }
@@ -140,10 +138,10 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
             super.onPostExecute(result);
             Message msg = mHandler.obtainMessage();
             if (result!=null){
-                msg.what = 1;
-                msg.obj = result;
+                msg.what = GET_TASK_RESULT;
+                msg.obj = result;//传递处理结果
             }else{
-                msg.what = 2;
+                msg.what = GET_NONE_RESULT;
             }
             mHandler.sendMessage(msg);
         }

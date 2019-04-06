@@ -57,6 +57,7 @@ public class PictureSlideFragment extends Fragment {
                 getActivity().finish();
             }
         });
+        //加载图片到photoView
         Glide.with(getContext())
                 .load(url)
                 .fitCenter()
